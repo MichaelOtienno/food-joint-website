@@ -1,31 +1,21 @@
-//client server
 const express = require('express');
-const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const path = require('path');
-const axios = require('axios'); // Import the axios library for making HTTP requests
-const { request } = require('http');
-
+const axios = require('axios'); 
+const connection = require ('./database')
 const app = express();
+const adminRoutes = require ('./admin')
+
+
+
+app.use('/admin', adminRoutes);
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'foodjoint',
-  port: 3306
-});
-
-connection.connect((error) => {
-  if (error) throw error;
-  console.log('Connected to MySQL database!');
-});
-
 // Serve static files from the "public" directory
-app.use(express.static('publics'))
+app.use(express.static('public'))
 
-// API ROUTES
+
+
 //                         ********** signup and sign in *********** 
 
 // Route for the root URL ("/")
@@ -35,7 +25,7 @@ app.get('/', (req, res) => {
 
 // Route for the signup page
 app.get('/signup', (req, res) => {
-  res.sendFile(path.join(__dirname, 'signup.html'));
+  res.sendFile(path.join(__dirname, '/views/signup.html'));
 });
 
 // Endpoint to handle signup form submission
@@ -57,7 +47,7 @@ app.post('/signup', (req, res) => {
     (err, results) => {
       if (err) {
         console.error('Failed to retrieve user data:', err);
-        res.sendFile(path.join(__dirname, 'signup.html')); // Redirect to signup page
+        res.sendFile(path.join(__dirname, '/views/signup.html')); 
       } else {
         if (results.length > 0) {
           console.log('Username already taken');
@@ -67,10 +57,10 @@ app.post('/signup', (req, res) => {
           connection.query('INSERT INTO users SET ?', userData, (err, results) => {
             if (err) {
               console.error('Failed to save user data:', err);
-              res.sendFile(path.join(__dirname, 'signup.html')); // Redirect to signup page
+              res.sendFile(path.join(__dirname, 'signup.html')); 
             } else {
               console.log('User data saved successfully!');
-              res.sendFile(path.join(__dirname, 'index.html')); // Redirect to index page (signin page)
+              res.sendFile(path.join(__dirname, 'index.html')); 
             }
           });
         }
@@ -94,7 +84,7 @@ app.post('/signin', (req, res) => {
       } else {
         if (results.length > 0) {
           console.log('Signin successful!');
-          res.sendFile(path.join(__dirname, 'home.html')); // Redirect to home page
+          res.sendFile(path.join(__dirname, '/views/home.html')); // Redirect to home page
         } else {
           console.log('Invalid username or password');
           res.sendFile(path.join(__dirname, 'index.html')); // Redirect to index page (signin page)
@@ -106,13 +96,13 @@ app.post('/signin', (req, res) => {
 //                             *********home ***********
 // Route for home page
 app.get('/home', (req, res) => {
-  res.sendFile(path.join(__dirname, 'home.html'));
+  res.sendFile(path.join(__dirname, '/views/home.html'));
 });
 
 //                             ******* food **********
 // Route for the food page
 app.get('/food', (req, res) => {
-  res.sendFile(path.join(__dirname, 'food.html'));
+  res.sendFile(path.join(__dirname, '/views/food.html'));
 });
 
 // Route for food.html (client view)
@@ -131,7 +121,7 @@ connection.query('SELECT * FROM food_items', (error, results) => {
 //                 ********** drinks ***********
 //Route for drinks.html (client view)
 app.get ('/drinks', (req, res) => {
-  res.sendFile(path.join(__dirname, 'drinks.html'));
+  res.sendFile(path.join(__dirname, '/views/drinks.html'));
 });
 // Route for drink.html (client view)
 app.get('/retd', (req,res) => {
@@ -150,7 +140,7 @@ app.get('/retd', (req,res) => {
 
 //Route to event
 app.get('/Event', (req, res) => {
-  res.sendFile(path.join(__dirname, 'event.html'));
+  res.sendFile(path.join(__dirname, '/views/event.html'));
 });
 
 // Endpoint to handle event form submission
@@ -229,12 +219,12 @@ app.post('/event', (req, res) => {
 
 //Route to thank you
 app.get('/thank_you', (req,res) => {
-  res.sendFile(path.join(__dirname, 'tevent.html'))
+  res.sendFile(path.join(__dirname, '/views/tevent.html'))
 })
 
 //Route to checkout
 app.get('/check', (req, res) => {
-  res.sendFile(path.join(__dirname, 'orders.html'));
+  res.sendFile(path.join(__dirname, '/views/orders.html'));
  });
 
 

@@ -1,17 +1,19 @@
-//                                ****** manager(admin) server **********
 const fs = require('fs');
 const express = require('express');
-const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const path = require('path');
-const app = express();
-app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+const connection = require('./database');
+const router = require('express').Router();
+
+
+router.use(express.json());
+router.use(bodyParser.urlencoded({ extended: true }));
+
 
 //                              ********** storage **********
 const storage = multer.diskStorage({
-  destination: 'publics/img/',
+  destination: 'public/img/',
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const extname = path.extname(file.originalname);
@@ -20,41 +22,74 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-//                          ****** database connection ************
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'foodjoint',
-  port: 8080
-});
 
-connection.connect((error) => {
-  if (error) throw error;
-  console.log('Connected to MySQL database!');
-});
- 
+
 //                       *************** stattic files ************
 // Serve static files from the "public" directory
-app.use(express.static('publics'))
+router.use(express.static('public'))
 
 
-//                              ******* API ROUTES ***********
-
-//     Route for the root URL ("/")
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
+//admin authentication
+router.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '/views/adminSignin.html'));
 });
+
+router.get('/adminSignup', (req, res) => {
+  res.sendFile(path.join(__dirname, '/views/adminSignup.html'));
+});
+
+router.post('/adminSignup', (req, res) => {
+  const { username, password } = req.body
+  sql = 'INSERT INTO admin (username, password) VALUES  (?,?)';
+  connection.query(sql, [username, password], (err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Error signing you in');
+    }
+    res.sendFile(path.join(__dirname, '/views/adminSignin.html'));
+  });
+
+});
+
+router.get('/adminPage', (req, res) => {
+  res.sendFile(path.join(__dirname, '/views/admin.html'))
+});
+
+router.post('/adminSignin', (req, res) => {
+  const { username, password } = req.body;
+  sql = 'SELECT * FROM admin WHERE username = ? AND password = ?';
+  connection.query(sql, [username, password], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('something went wrong');
+    }
+    else {
+      if (results.length > 0) {
+        res.redirect('/admin/adminPage');
+      } else {
+        console.log('invalid credentials');
+        return res.status(401).send('invalid credentials');
+      }
+    }
+
+
+
+  })
+
+});
+
+
+
 
 //                           *************** food ***********************
 // Route for food.html (client view)
-app.get('/food', (req, res) => {
-  res.sendFile(path.join(__dirname, 'food.html'));
+router.get('/food', (req, res) => {
+  res.sendFile(path.join(__dirname, '/views/food.html'));
 });
 
 //    Route for food.html (client view)
-app.get('/ret', (req, res) => {
-    // Retrieve the food items from the database
+router.get('/ret', (req, res) => {
+  // Retrieve the food items from the database
   connection.query('SELECT * FROM food_items', (error, results) => {
     if (error) {
       console.error('Error fetching food items:', error);
@@ -66,12 +101,12 @@ app.get('/ret', (req, res) => {
 });
 
 // Route for food2.html (admin view)
-app.get('/food2', (req, res) => {
-  res.sendFile(path.join(__dirname, 'food2.html'));
+router.get('/food2', (req, res) => {
+  res.sendFile(path.join(__dirname, '/views/food2.html'));
 });
 
 // Route to handle the food form submission
-app.post('/food2', upload.single('image'), (req, res) => {
+router.post('/food2', upload.single('image'), (req, res) => {
   const { name, description, price, category } = req.body;
   const imageUrl = '/img/' + req.file.filename;
 
@@ -102,14 +137,14 @@ app.post('/food2', upload.single('image'), (req, res) => {
       categoryId = 10;
       break;
     case 'Offer':
-        categoryId = 14;
-        break;
+      categoryId = 14;
+      break;
     case 'Pizza':
-          categoryId = 15;
-          break;
+      categoryId = 15;
+      break;
     case 'New':
-            categoryId = 16;
-            break;
+      categoryId = 16;
+      break;
     default:
       categoryId = null;
   }
@@ -140,12 +175,12 @@ app.post('/food2', upload.single('image'), (req, res) => {
 });
 
 //Route to food edit page
-app.get ('/fedit', (req,res) => {
-  res.sendFile(path.join(__dirname, 'fedit.html'));
+router.get('/fedit', (req, res) => {
+  res.sendFile(path.join(__dirname, '/views/fedit.html'));
 });
 
 // Endpoint for handling the search request
-app.post('/search', (req, res) => {
+router.post('/search', (req, res) => {
   const searchTerm = req.body.search;
 
   const query = 'SELECT * FROM food_items WHERE name = ?';
@@ -167,7 +202,7 @@ app.post('/search', (req, res) => {
   });
 });
 
-app.post('/updateFood', upload.single('image'), (req, res) => {
+router.post('/updateFood', upload.single('image'), (req, res) => {
   const { name, description, price, category } = req.body;
   let imageUrl;
 
@@ -236,7 +271,7 @@ app.post('/updateFood', upload.single('image'), (req, res) => {
 
     // Delete the old image file from the storage
     if (currentImageUrl && req.file) {
-      const imagePath = path.join(__dirname, 'publics', currentImageUrl);
+      const imagePath = path.join(__dirname, 'public', currentImageUrl);
       fs.unlink(imagePath, (error) => {
         if (error) {
           console.error('Error deleting old image file:', error);
@@ -252,13 +287,13 @@ app.post('/updateFood', upload.single('image'), (req, res) => {
         res.status(500).send('Error updating food item');
       } else {
         console.log('Food item updated successfully!');
-        res.redirect('/food'); // Redirect to the food listing page
+        res.redirect('/food');
       }
     });
   });
 });
 
-app.post('/deleteFood', (req, res) => {
+router.post('/deleteFood', (req, res) => {
   const foodId = req.body.foodId;
 
   // Retrieve the image URL of the food item first
@@ -277,7 +312,7 @@ app.post('/deleteFood', (req, res) => {
           } else {
             console.log('Food item deleted successfully!');
             // Delete the image file from the storage
-            const imagePath = path.join(__dirname, 'publics', imageUrl);
+            const imagePath = path.join(__dirname, 'public', imageUrl);
             fs.unlink(imagePath, (error) => {
               if (error) {
                 console.error('Error deleting image file:', error);
@@ -301,35 +336,35 @@ app.post('/deleteFood', (req, res) => {
 
 //                             ************ drinks *********************
 
-//Route for drinks.html (client view)
-app.get ('/drinks', (req, res) => {
-  res.sendFile(path.join(__dirname, 'drinks.html'));
+//client view
+router.get('/drinks', (req, res) => {
+  res.sendFile(path.join(__dirname, '/views/drinks.html'));
 });
-
-app.get('/retd', (req,res) => {
-  //Retrieve the drinks from the database
+//admin view
+router.get('/drink2', (req, res) => {
+  res.sendFile(path.join(__dirname, '/views/drink2.html'));
+});
+//Retrieve the drinks from the database
+router.get('/retd', (req, res) => {
   connection.query('SELECT * FROM drinks', (error, results) => {
     if (error) {
       console.error('Error fetching drinks:', error);
       res.status(500).send('Error fetching drink items');
     } else {
-      res.json(results); //send the food items as JSON
+      res.json(results);
     }
   });
 });
 
-//Route for drink2.html (admin view)
-app.get('/drink2', (req,res) => {
-  res.sendFile(path.join(__dirname,  'drink2.html'));
+
+
+// Route to drink edit page 
+router.get('/dredit', (req, res) => {
+  res.sendFile(path.join(__dirname, '/views/dredit.html'));
 });
 
-// Route to drink edit page (admin view)
-app.get('/dredit', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dredit.html'));
-});
-
-// Endpoint for handling the search request for drinks (admin)
-app.post('/searchDrink', (req, res) => {
+// Route to search request for drinks
+router.post('/searchDrink', (req, res) => {
   const searchTerm = req.body.search;
 
   const query = 'SELECT * FROM drinks WHERE name = ?';
@@ -339,19 +374,16 @@ app.post('/searchDrink', (req, res) => {
       res.status(500).send('An error occurred while searching for the drink.');
     } else {
       if (results.length > 0) {
-        // Drink item found
         const drink = results[0];
-        // Send the drink details as a response
         res.json(drink);
       } else {
-        // Drink item not found
         res.status(404).send('Drink not found.');
       }
     }
   });
 });
 
-app.post('/updateDrink', upload.single('image'), (req, res) => {
+router.post('/updateDrink', upload.single('image'), (req, res) => {
   const { name, description, price, category } = req.body;
   let imageUrl;
   if (req.file) {
@@ -394,12 +426,12 @@ app.post('/updateDrink', upload.single('image'), (req, res) => {
       res.status(500).send('Error updating drink item');
     } else {
       console.log('Drink item updated successfully!');
-      res.redirect('/drinks'); // Redirect to the drink listing page 
+      res.redirect('/drinks'); //drink client view
     }
   });
 });
 
-app.post('/deleteDrink', (req, res) => {
+router.post('/deleteDrink', (req, res) => {
   const drinkId = req.body.drinkId;
   // Retrieve the image URL of the drink item first
   connection.query('SELECT image_url FROM drinks WHERE id = ?', [drinkId], (error, results) => {
@@ -417,7 +449,7 @@ app.post('/deleteDrink', (req, res) => {
           } else {
             console.log('Drink item deleted successfully!');
             // Delete the image file from the storage
-            const imagePath = path.join(__dirname, 'publics', imageUrl);
+            const imagePath = path.join(__dirname, 'public', imageUrl);
             fs.unlink(imagePath, (error) => {
               if (error) {
                 console.error('Error deleting image file:', error);
@@ -441,7 +473,7 @@ app.post('/deleteDrink', (req, res) => {
 
 
 // Route to handle the drink form submission
-app.post('/drink2', upload.single('image'), (req, res) => {
+router.post('/drink2', upload.single('image'), (req, res) => {
   const { name, description, price, category } = req.body;
   const imageUrl = '/img/' + req.file.filename;
 
@@ -486,7 +518,7 @@ app.post('/drink2', upload.single('image'), (req, res) => {
       res.status(500).send('Error adding food item');
     } else {
       console.log('Food item added successfully!');
-      res.redirect('/drinks');
+      res.redirect('/drinks');//client view
     }
   });
 });
@@ -494,12 +526,12 @@ app.post('/drink2', upload.single('image'), (req, res) => {
 // ***********events************
 
 //Route to admin events
-app.get('/event2', (req, res) => {
-  res.sendFile(path.join(__dirname, 'event2.html'));
+router.get('/event2', (req, res) => {
+  res.sendFile(path.join(__dirname, '/view/event2.html'));
 });
 
 // Endpoint to fetch events data
-app.get('/eventsad', (req, res) => {
+router.get('/eventsad', (req, res) => {
   // Retrieve events data from the database
   connection.query('SELECT * FROM events', (err, results) => {
     if (err) {
@@ -512,11 +544,11 @@ app.get('/eventsad', (req, res) => {
 });
 
 //Route to event details
-app.get('/vev', (req, res) => {
-  res.sendFile(path.join(__dirname, 'vevents.html'));
+router.get('/vev', (req, res) => {
+  res.sendFile(path.join(__dirname, '/view/vevents.html'));
 });
 
-app.get('/event-details', (req, res) => {
+router.get('/event-details', (req, res) => {
   const eventId = req.query.id;
 
   // Retrieve the event details from the database based on the eventId
@@ -538,7 +570,7 @@ app.get('/event-details', (req, res) => {
 });
 
 // Endpoint to handle the delete request for events
-app.delete('/devents/:eventId', (req, res) => {
+router.delete('/devents/:eventId', (req, res) => {
   const eventId = req.params.eventId;
   // Perform the deletion operation using the eventId
   connection.query('DELETE FROM events WHERE id = ?', [eventId], (error, result) => {
@@ -552,11 +584,9 @@ app.delete('/devents/:eventId', (req, res) => {
   });
 });
 
-// Start the server
-app.listen(8080, () => {
-  console.log('Server started on port 3000');
-});
 
+
+module.exports = router;
 
 
 

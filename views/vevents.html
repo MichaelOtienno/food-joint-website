@@ -60,7 +60,7 @@
 
     
     // Fetch the event details from the server
-    fetch(`/event-details?id=${eventId}`)
+    fetch(`/admin/event-details?id=${eventId}`)
       .then(response => response.json())
       .then(event => {
         document.getElementById('name').textContent = event.name;

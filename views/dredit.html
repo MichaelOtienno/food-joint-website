@@ -6,7 +6,7 @@
 </head>
 <body>
   <h1>Edit Drinks</h1>
-  <form id="drinkForm" action="/updateDrink" method="POST" enctype="multipart/form-data">
+  <form id="drinkForm" action="/admin/updateDrink" method="POST" enctype="multipart/form-data">
     <div class="form-group">
       <label for="search">Search Drink Item</label>
       <input type="text" id="search" name="search" required>
@@ -53,7 +53,7 @@
       const searchTerm = document.getElementById('search').value;
       const xhr = new XMLHttpRequest();
 
-      xhr.open('POST', '/searchDrink', true);
+      xhr.open('POST', '/admin/searchDrink', true);
       xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
@@ -93,7 +93,7 @@
         const drinkId = document.getElementById('drinkId').value;
         const xhr = new XMLHttpRequest();
 
-        xhr.open('POST', '/deleteDrink', true);
+        xhr.open('POST', '/admin/deleteDrink', true);
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function () {
           if (xhr.readyState === 4) {

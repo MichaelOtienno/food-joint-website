@@ -1,0 +1,21 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Authentication</title>
+    <link rel="stylesheet" href="css/adminSignin.css">
+</head>
+<body>
+    <nav>
+        <h2>ADMIN PANEL</h2>
+    </nav>
+    <form action="/admin/adminSignin" method="POST">
+        <input type="text" placeholder="Enter username" name="username" id="username">
+        <input type="password" placeholder="Enter password" name="password" id="password">
+    </form>
+    <a href="/admin/adminSignup">Signup</a>
+    <button id="submit">Submit</button>
+    
+</body>
+<script src="js/adminSignin.js"></script>
+</html>

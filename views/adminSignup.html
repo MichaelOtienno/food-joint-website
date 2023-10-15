@@ -1,0 +1,22 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Authentication</title>
+    <link rel="stylesheet" href="css/adminSignup.css">
+</head>
+<body>
+    <nav>
+        <h2>ADMIN PANEL</h2>
+    </nav>
+    <form action="/adminauth" method="POST">
+        <input type="text" placeholder="Enter username" name="username" id="username">
+        <input type="password" placeholder="Enter password" name="password" id="password">
+        <input type="password" placeholder="ConfirmPassword" name="confirmPassword" id="confirmPassword">
+    </form>
+    <p>already have an account?</p><span><a href="/admin/">Signin</a> </span>
+    <button id="submit">Submit</button>
+    
+</body>
+<script src="js/adminSignup.js"></script>
+</html>
