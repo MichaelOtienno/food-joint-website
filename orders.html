@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Order Summary</title>
+  <link rel="stylesheet" type="text/css" href="css/orders.css">
+</head>
+<body>
+  <h1>
+    Order Summary
+    <span class="delete-icon" title="Delete All">&#128465;</span>
+  </h1>
+
+  <div class="container">
+    <div id="cartItemsContainer"></div>
+    <a href="/food" class="add-more-button">Add More<span class="add-more-icon"></span></a>
+    <p class="total">Total: $<span id="totalPrice">0</span></p>
+    <button onclick="togglePaymentOptions()" class="checkout-button">Checkout</button>
+
+    <div id="paymentOptions" class="payment-options">
+      <h2>Select Payment Option</h2>
+      <div class="payment-option">
+        <input type="radio" name="payment" id="mpesaOption" value="mpesa">
+        <label for="mpesaOption">Pay via M-Pesa</label>
+      </div>
+      <div class="payment-option">
+        <input type="radio" name="payment" id="cashOption" value="cash">
+        <label for="cashOption">Cash on Delivery</label>
+      </div>
+      <button onclick="processPayment()" class="checkout-button">Proceed to Pay</button>
+    </div>
+  </div>
+       
+  <script>
+    // Get the cart items from the URL parameter
+ const urlParams = new URLSearchParams(window.location.search);
+ const cartItemsParam = urlParams.get('cartItems');
+ const cartItems = cartItemsParam ? JSON.parse(decodeURIComponent(cartItemsParam)) : [];
+ 
+ // Function to update the cart items display
+ function updateCartItems() {
+   const cartItemsContainer = document.getElementById('cartItemsContainer');
+   cartItemsContainer.innerHTML = '';
+   
+ 
+   cartItems.forEach((item, index) => {
+  if (item.quantity >= 1) {
+    const card = document.createElement('div');
+    card.classList.add('card');
+
+    const image = document.createElement('img');
+    image.src = item.image; // Set the image source URL
+    console.log(item.image); 
+    card.appendChild(image);
+ 
+       const details = document.createElement('div');
+       details.classList.add('details');
+ 
+       const name = document.createElement('div');
+       name.classList.add('name');
+       name.textContent = item.name;
+       details.appendChild(name);
+ 
+       const price = document.createElement('div');
+       price.classList.add('price');
+       price.textContent = 'Ksh ' + item.price;
+       details.appendChild(price);
+ 
+       const quantityContainer = document.createElement('div');
+       quantityContainer.classList.add('quantity-container');
+ 
+       const decreaseButton = document.createElement('button');
+       decreaseButton.textContent = '-';
+       decreaseButton.addEventListener('click', () => decreaseQuantity(index)); // Add event listener to decrease quantity
+       quantityContainer.appendChild(decreaseButton);
+ 
+       const quantity = document.createElement('span');
+       quantity.textContent = item.quantity;
+       quantityContainer.appendChild(quantity);
+ 
+       const increaseButton = document.createElement('button');
+       increaseButton.textContent = '+';
+       increaseButton.addEventListener('click', () => increaseQuantity(index)); // Add event listener to increase quantity
+       quantityContainer.appendChild(increaseButton);
+ 
+       details.appendChild(quantityContainer);
+       card.appendChild(details);
+       cartItemsContainer.appendChild(card);
+     }
+   });
+ }
+ 
+ // Function to calculate and display the total price
+ function calculateTotalPrice() {
+   const totalPriceElement = document.getElementById('totalPrice');
+   let totalPrice = 0;
+ 
+   cartItems.forEach(item => {
+     totalPrice += item.price * item.quantity;
+   });
+ 
+   totalPriceElement.textContent = 'Ksh ' + totalPrice;
+ }
+ 
+ // Function to decrease quantity
+ function decreaseQuantity(index) {
+   if (cartItems[index].quantity > 1) {
+     cartItems[index].quantity--;
+   } else {
+     cartItems.splice(index, 1);
+   }
+ 
+   updateCartItems();
+   calculateTotalPrice();
+ }
+ 
+ // Function to increase quantity
+ function increaseQuantity(index) {
+   cartItems[index].quantity++;
+   updateCartItems();
+   calculateTotalPrice();
+ }
+ 
+ // Event listener for delete icon
+const deleteIcon = document.querySelector('.delete-icon');
+deleteIcon.addEventListener('click', () => {
+  const container = document.querySelector('.container');
+  container.innerHTML = ''; // Clear the container element
+});
+
+ 
+ // Call the updateCartItems and calculateTotalPrice functions
+ updateCartItems();
+ calculateTotalPrice();
+
+ 
+ 
+ function togglePaymentOptions() {
+   const paymentOptions = document.getElementById('paymentOptions');
+   paymentOptions.classList.toggle('show');
+ }
+ 
+ function processPayment() {
+    const mpesaOption = document.getElementById('mpesaOption');
+    const cashOption = document.getElementById('cashOption');
+
+    if (mpesaOption.checked) {
+      // Logic for processing payment via M-Pesa
+      const amount = calculateTotalPrice();
+      const phoneNumber = prompt('Enter your M-Pesa phone number:'); // Prompt the user for their phone number
+      initiateMpesaPayment(amount, phoneNumber);
+    } else if (cashOption.checked) {
+      // Logic for processing payment via Cash on Delivery
+      alert('Processing payment via Cash on Delivery...');
+    } else {
+      // No payment option selected
+      alert('Please select a payment option.');
+    }
+  }
+
+ 
+ 
+ </script>
+</body>
+</html>

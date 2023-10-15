@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage Food</title>
+  <link rel="stylesheet" type="text/css" href="css/food2.css">
+</head>
+<body>
+  <h1>Add New Food</h1>
+  
+  <form id="foodForm" action="/food2" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required>
+    </div>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" name="description"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="price">Price</label>
+      <input type="number" id="price" name="price" step="0.01" required>
+    </div>
+    <div class="form-group">
+      <label for="image">Image</label>
+      <input type="file" id="image" name="image" accept="image/*">
+    </div>
+    <div class="form-group">
+      <label for="category">Category</label>
+      <select id="category" name="category">
+        <option value="New">New</option>
+        <option value="Chips Foonga">Chips Foonga</option>
+        <option value="Quickies">Fast Food</option>
+        <option value="Satisfy My Hunger">Satisfy My Hunger</option>
+        <option value="Swahili Kiss">Swahili Kiss</option>
+        <option value="Naughty Chef's Romance">Naughty Chef's Romance</option>
+        <option value="Squeeze Me in the Bread Sheets">Squeeze Me in the Bread Sheets</option>
+        <option value="Seduce Me by the Sea">Seduce Me by the Sea</option>
+        <option value="Platters">Platters</option>
+        <option value="Offer">Offer</option>
+        <option value="Pizza">Pizza</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <button type="submit">Add Food Item</button>
+      <a href="/fedit" class="update-link">Edit</a>
+    </div>
+  </form>
+</body>
+</html>

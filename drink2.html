@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage Drinks</title>
+  <link rel="stylesheet" type="text/css" href="css/drink2.css">
+</head>
+<body>
+  <h1>Add a New Drink</h1>
+  
+  <form id="foodForm" action="/drink2" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required>
+    </div>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" name="description"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="price">Price</label>
+      <input type="number" id="price" name="price" step="0.01" required>
+    </div>
+    <div class="form-group">
+      <label for="image">Image</label>
+      <input type="file" id="image" name="image" accept="image/*">
+    </div>
+    <div class="form-group">
+        <label for="category">Category</label>
+        <select id="category" name="category">
+          <option value="Offer">Offer</option>
+          <option value="New">New</option>
+          <option value="Juice">Juice</option>
+          <option value="Smoothies">Smoothie</option>
+          <option value="Cocktail">Cocktail</option>
+        </select>
+      </div>
+    <div class="form-group">
+      <button type="submit">Add Drink</button>
+      <a href="/dredit" class="update-link">Edit</a>
+    </div>
+  </form>
+</body>
+</html>

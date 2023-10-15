@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Signup</title>
+  <style>
+    body {
+    background-color: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    }
+
+    h1 {
+      color: #8B4513;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form {
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #8B4513;
+      background-color: #000;
+      color: #fff;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+      background-color: #8B4513;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #654321;
+    }
+
+    .signin-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .signin-link a {
+      color: #8B4513;
+      text-decoration: none;
+    }
+
+    .signin-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>Let's Get Started by Signing you Up</h1>
+  <form action="/signup" method="POST">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required>
+
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="firstName">First Name</label>
+    <input type="text" id="firstName" name="firstName">
+
+    <label for="lastName">Last Name</label>
+    <input type="text" id="lastName" name="lastName">
+
+    <button type="submit">Sign Up</button>
+  </form>
+
+  <div class="signin-link">
+    <p>Already have an account? <a href="/">Sign in</a></p>
+  </div>
+
+  
+</body>
+</html>
+
+
+
+
+
+

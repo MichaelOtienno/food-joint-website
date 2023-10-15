@@ -1,0 +1,83 @@
+body {
+  background-color: #000;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  color: #a65e2c;
+  text-align: center;
+}
+
+.event-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.event-card {
+  background-color: #232323;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.event-card h2 {
+  color: #fff;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.event-card p {
+  color: #ccc;
+  margin-bottom: 10px;
+}
+
+.event-card .event-date {
+  color: #a65e2c;
+}
+
+.event-card .event-description {
+  max-height: 80px;
+  overflow: hidden;
+}
+
+.event-card .event-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.event-card .event-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.event-card .event-actions a {
+  color: #a65e2c;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+.event-card .event-actions a:hover {
+  color: #fff;
+}
+
+.event-card .event-actions button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: #a65e2c;
+  font-size: 16px;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.event-card .event-actions button:hover {
+  color: #fff;
+}

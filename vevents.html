@@ -1,0 +1,81 @@
+<!-- admin views event -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Event Details</title>
+  <link rel="stylesheet" type="text/css" href="css/vevents.css">
+</head>
+<body>
+  <div class="header">
+    <h1>Event Details</h1>
+  </div>
+
+  <div class="event-details-container">
+    <div class="form-row">
+      <label for="name" class="form-label">Name:</label>
+      <span id="name" class="form-value"></span>
+    </div>
+    <div class="form-row">
+        <label for="organizer" class="form-label">Organizer:</label>
+        <span id="organizer" class="form-value"></span>
+      </div>
+    <div class="form-row">
+      <label for="event_date" class="form-label">Date:</label>
+      <span id="event_date" class="form-value"></span>
+    </div>
+
+    <div class="form-row">
+      <label for="start_time" class="form-label">Start Time:</label>
+      <span id="start_time" class="form-value"></span>
+    </div>
+
+    <div class="form-row">
+      <label for="end_time" class="form-label">End Time:</label>
+      <span id="end_time" class="form-value"></span>
+    </div>
+
+    <div class="form-row">
+      <label for="contact" class="form-label">Contact:</label>
+      <span id="contact" class="form-value"></span>
+    </div>
+
+    <div class="form-row">
+      <label for="address" class="form-label">Address:</label>
+      <span id="address" class="form-value"></span>
+    </div>
+    <div class="form-row">
+        <label for="capacity" class="form-label">Capacity:</label>
+        <span id="capacity" class="form-value"></span>
+      </div>
+    <div class="form-row form-field description">
+      <label for="description" class="form-label">Description:</label>
+      <div class="description-value" id="description"></div>
+    </div>
+  </div>
+
+  <script>
+    // Fetch the event ID from the URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventId = urlParams.get('id');
+
+    
+    // Fetch the event details from the server
+    fetch(`/event-details?id=${eventId}`)
+      .then(response => response.json())
+      .then(event => {
+        document.getElementById('name').textContent = event.name;
+        document.getElementById('description').textContent = event.description;
+        document.getElementById('event_date').textContent = event.event_date;
+        document.getElementById('start_time').textContent = event.start_time;
+        document.getElementById('end_time').textContent = event.end_time;
+        document.getElementById('contact').textContent = event.contact;
+        document.getElementById('address').textContent = event.address;
+        document.getElementById('capacity').textContent = event.capacity;
+        document.getElementById('organizer').textContent = event.organizer;
+      })
+      .catch(error => {
+        console.error('Failed to fetch event details:', error);
+      });
+  </script>
+</body>
+</html>

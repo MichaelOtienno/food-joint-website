@@ -1,0 +1,94 @@
+body {
+  background-color: #000;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  color: #a65e2c;
+  text-align: center;
+}
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+}
+
+form {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="time"],
+input[type="number"] {
+  background-color: #fff;
+  color: #000;
+  border: none;
+  padding: 10px;
+  margin-top: 5px;
+  height: 40px; /* Increase the height of the input fields */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+textarea {
+  background-color: #fff;
+  color: #000;
+  border: none;
+  padding: 10px;
+  margin-top: 5px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input[type="submit"] {
+  background-color: #a65e2c;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+  background-color: #854121;
+}
+
+#error-message {
+  margin-top: 10px;
+}
+.time-container {
+  display: flex;
+  align-items: center; /* Center the items vertically */
+  margin-top: 5px;
+}
+
+.time-container label {
+  width: 28%;
+}
+
+.time-container input[type="text"] {
+  background-color: #fff;
+  color: #000;
+  border: none;
+  padding: 10px;
+  margin-top: 5px;
+  height: 40px; /* Increase the height of the input fields */
+  flex-grow: 1; /* Allow the input fields to grow and fill the remaining space */
+}
+
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.pagination button {
+  margin-left: 10px;
+}

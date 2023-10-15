@@ -1,0 +1,61 @@
+body {
+    background-color: #f2f2f2;
+    color: #333333;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  .header {
+    background-color: #333333;
+    color: #ffffff;
+    padding: 20px;
+    text-align: center;
+  }
+
+  h1 {
+    margin: 0;
+  }
+
+  .event-details-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    flex: 1;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+
+  .form-value {
+    flex: 2;
+    color: #666666;
+  }
+
+  .form-field.description {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .description-value {
+flex: 1;
+height: 300px; /* Increase the height as desired */
+width: 100%;
+padding: 5px;
+background-color: #f9f9f9;
+border: 1px solid #dddddd;
+border-radius: 3px;
+overflow-y: auto; /* Added vertical scrolling */
+word-wrap: break-word; /* Prevent long words from overlapping */
+}

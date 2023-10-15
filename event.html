@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Event</title>
+  <link rel="stylesheet" type="text/css" href="css/event.css">
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    h1 {
+      color: #a65e2c;
+      text-align: center;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    input[type="text"],
+    textarea,
+    input[type="date"],
+    input[type="time"],
+    input[type="number"] {
+      background-color: #fff;
+      color: #000;
+      border: none;
+      padding: 5px;
+      margin-top: 5px;
+    }
+
+    input[type="submit"] {
+      background-color: #a65e2c;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #854121;
+    }
+      .next-button {
+    background-color: #808080;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px; /* Add margin to create a gap */
+    align-self: flex-end;
+    margin-left: 300px;
+  }
+  .previous-button {
+      background-color: #808080;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 20px;
+      align-self: flex-start;
+      margin-right: 100px;
+    }
+
+    #error-message {
+      margin-top: 10px;
+    }
+
+    .time-container label {
+      display: inline-block;
+    }
+
+    .time-container input[type="time"] {
+      width: 130px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.show {
+      display: block;
+    }
+
+
+/* Existing CSS code */
+
+
+  </style>
+</head>
+<body>
+  <h1>Create Event</h1>
+
+  <form id="event-form" action="/event" method="post">
+    <div class="page show" id="page1">
+      <input type="text" id="name" name="name" placeholder="Name" required>
+      <input type="text" id="address" name="address" placeholder="Address">
+      <div>
+        <input type="text" id="contact" name="contact" placeholder="Contact" oninput="validateContact()">
+        <p class="error-message" id="contact-error-message"></p>
+      </div>
+      <input type="text" id="organizer" name="organizer" placeholder="Organizer">
+      
+       <input type="button" value="Next" onclick="showPage('page2')" class="next-button">
+
+      <p id="error-message" style="color: red; font-weight: bold;"></p>
+    </div>
+
+    <div class="page" id="page2">
+      <textarea id="description" name="description" placeholder="Description" rows="4"></textarea>
+      <input type="date" id="event_date" name="event_date" placeholder="Event Date" required>
+      <div class="time-container">
+        <label for="start_time">Start Time:</label>
+        <input type="time" id="start_time" name="start_time" min="00:00" max="23:59" placeholder="Start Time" required>
+        <label for="end_time">End Time:</label>
+        <input type="time" id="end_time" name="end_time" min="00:00" max="23:59" placeholder="End Time" required>
+      </div>
+      <input type="number" id="event_days" name="event_days" min="1" placeholder="Number of Event Days" required>
+      <input type="number" id="capacity" name="capacity" placeholder="Capacity">
+      <input type="button" value="Previous" onclick="showPage('page1')" class="previous-button">
+      <input type="submit" value="Create Event">
+    </div>
+  </form>
+
+ 
+
+  <script>
+    // Client-side JavaScript to display the error message, if any
+    const errorMessage = document.getElementById('error-message');
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+  
+    if (error) {
+      errorMessage.textContent = error;
+    }
+  
+    let currentPage = 1;
+    const page1 = document.getElementById('page1');
+    const page2 = document.getElementById('page2');
+    const eventForm = document.getElementById('event-form');
+  
+    function validateContact() {
+      const contactInput = document.getElementById('contact');
+      const contactValue = contactInput.value;
+      const contactErrorMessage = document.getElementById('contact-error-message');
+  
+      if (contactValue.length !== 10) {
+        contactErrorMessage.textContent = 'Contact should have exactly ten numbers.';
+      } else {
+        contactErrorMessage.textContent = '';
+      }
+    }
+  
+    function showErrorMessage(message) {
+    errorMessage.textContent = message;
+
+    setTimeout(() => {
+      errorMessage.textContent = '';
+    }, 3000);
+  }
+
+  function validateFields() {
+    const nameInput = document.getElementById('name');
+    const addressInput = document.getElementById('address');
+    const contactInput = document.getElementById('contact');
+    const organizerInput = document.getElementById('organizer');
+
+    const nameValue = nameInput.value.trim();
+    const addressValue = addressInput.value.trim();
+    const contactValue = contactInput.value.trim();
+    const organizerValue = organizerInput.value.trim();
+
+    if (nameValue === '' || addressValue === '' || contactValue === '' || organizerValue === '') {
+      showErrorMessage('Please fill in all fields.');
+      return false;
+    }
+
+    return true;
+  }
+
+  
+    function showPage(pageNumber) {
+      if (pageNumber === 'page2') {
+        if (!validateFields()) {
+          return;
+        }
+  
+        const contactInput = document.getElementById('contact');
+        const contactValue = contactInput.value;
+  
+        if (contactValue.length !== 10) {
+          errorMessage.textContent = 'Contact should have exactly ten numbers.';
+          return;
+        }
+  
+        currentPage = 2;
+        page1.classList.remove('show');
+        page2.classList.add('show');
+      } else if (pageNumber === 'page1') {
+        currentPage = 1;
+        page2.classList.remove('show');
+        page1.classList.add('show');
+      }
+    }
+  
+    eventForm.addEventListener('submit', (event) => {
+      if (currentPage === 1) {
+        event.preventDefault();
+        showPage('page2');
+      } else {
+        const startTimeInput = document.getElementById('start_time');
+        const endTimeInput = document.getElementById('end_time');
+        const eventDateInput = document.getElementById('event_date');
+        const eventDaysInput = document.getElementById('event_days');
+        const capacityInput = document.getElementById('capacity');
+        const startTime = startTimeInput.value;
+        const endTime = endTimeInput.value;
+        const eventDate = eventDateInput.value;
+        const eventDays = parseInt(eventDaysInput.value);
+        const capacity = parseInt(capacityInput.value);
+  
+        // Check if the end time is before or the same as the start time
+        if (eventDays < 1 || (eventDays === 1 && endTime <= startTime)) {
+          event.preventDefault();
+          errorMessage.textContent = 'Invalid event duration. Please provide a valid number of event days or adjust the start/end time.';
+        }
+      }
+    });
+  </script>
+  
+</body>
+</html>

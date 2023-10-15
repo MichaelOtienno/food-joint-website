@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage Drinks</title>
+  <link rel="stylesheet" type="text/css" href="css/dredit.css">
+</head>
+<body>
+  <h1>Edit Drinks</h1>
+  <form id="drinkForm" action="/updateDrink" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="search">Search Drink Item</label>
+      <input type="text" id="search" name="search" required>
+      <button type="button" class="search-button" onclick="searchDrink()">Search</button>
+    </div>
+    <div class="form-group">
+      <label for="drinkId">Drink ID</label>
+      <input type="hidden" id="drinkId" name="drinkId">
+    </div>
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name">
+    </div>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" name="description"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="price">Price</label>
+      <input type="number" id="price" name="price" step="0.01">
+    </div>
+    <div class="form-group">
+      <label for="image">Image</label>
+      <input type="file" id="image" name="image" accept="image/*">
+      <img id="image-preview" src="" alt="Image Preview" style="display: none; max-width: 300px; margin-top: 10px;">
+    </div>
+    <div class="form-group">
+      <label for="category">Category</label>
+      <select id="category" name="category">
+        <option value="Juice">Juice</option>
+        <option value="Smoothies">Smoothies</option>
+        <option value="Cocktail">Cocktail</option>
+        <option value="Offer">Offer</option>
+        <option value="New">New</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <button type="submit" class="update-button">Update Drink Item</button>
+      <button type="button" class="delete-button" onclick="confirmDelete()">Delete</button>
+    </div>
+  </form>
+  <script>
+    function searchDrink() {
+      const searchTerm = document.getElementById('search').value;
+      const xhr = new XMLHttpRequest();
+
+      xhr.open('POST', '/searchDrink', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            const drink = JSON.parse(xhr.responseText);
+            // Populate the form fields with the retrieved drink details
+            document.getElementById('name').value = drink.name;
+            document.getElementById('description').value = drink.description;
+            document.getElementById('price').value = drink.price;
+            document.getElementById('category').value = drink.category;
+            document.getElementById('drinkId').value = drink.id; // Populate the drink ID
+
+            // Pre-fill the image field
+            const imageField = document.getElementById('image');
+            if (drink.image) {
+              const imagePreview = document.getElementById('image-preview');
+              imagePreview.src = drink.image;
+              imagePreview.style.display = 'block';
+              imageField.required = false;
+            } else {
+              imageField.required = true;
+            }
+          } else if (xhr.status === 404) {
+            alert('Drink not found.');
+          } else {
+            alert('An error occurred while searching for the drink.');
+          }
+        }
+      };
+
+      xhr.send('search=' + encodeURIComponent(searchTerm));
+    }
+
+    function confirmDelete() {
+      var result = confirm("Are you sure you want to delete this drink item?");
+      if (result) {
+        const drinkId = document.getElementById('drinkId').value;
+        const xhr = new XMLHttpRequest();
+
+        xhr.open('POST', '/deleteDrink', true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+              alert('Drink item deleted successfully!');
+              resetForm();
+            } else {
+              alert('An error occurred while deleting the drink item.');
+            }
+          }
+        };
+
+        xhr.send('drinkId=' + encodeURIComponent(drinkId));
+      }
+    }
+
+    function resetForm() {
+      document.getElementById('drinkForm').reset();
+      const imagePreview = document.getElementById('image-preview');
+      imagePreview.src = '';
+      imagePreview.style.display = 'none';
+    }
+  </script>
+</body>
+</html>
